@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // MCP-сервер: ядро. Знает только протокол и умеет подхватывать tools из папки ./tools
 // Каждый файл tools/*.mjs = один метод (export default { name, description, inputSchema, handler }).
 // Без зависимостей: не нужны ни npm install, ни node_modules. Нужна Node 18+.

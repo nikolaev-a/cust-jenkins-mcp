@@ -1,0 +1,12 @@
+{
+  "name": "jenkins-mcp-custom",
+  "version": "1.0.0",
+  "description": "Custom MCP server for Jenkins",
+  "private": true,
+  "bin": {
+    "jenkins-mcp-custom": "server.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
