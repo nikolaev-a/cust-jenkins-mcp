@@ -32,9 +32,8 @@ export const folderToPath = (folder) =>
     .map((part) => `/job/${encodeURIComponent(part)}`)
     .join('');
 
-// GET к Jenkins, возвращает распарсенный JSON.
-// jenkinsGet('/job/223/api/json', { tree: 'jobs[name]' })
-export async function jenkinsGet(path, params = {}) {
+// Общий GET: авторизация, таймаут и проверка статуса в одном месте.
+async function jenkinsRequest(path, params) {
   const { baseUrl, auth, timeoutMs } = config();
   const query = new URLSearchParams(params).toString();
   const url = `${baseUrl}${path}${query ? `?${query}` : ''}`;
@@ -43,5 +42,19 @@ export async function jenkinsGet(path, params = {}) {
     signal: AbortSignal.timeout(timeoutMs),
   });
   if (!res.ok) throw new Error(`Jenkins вернул ${res.status} ${res.statusText} для ${url}`);
-  return res.json();
+  return res;
 }
+
+// GET к Jenkins, возвращает распарсенный JSON.
+// jenkinsGet('/job/223/api/json', { tree: 'jobs[name]' })
+export async function jenkinsGet(path, params = {}) {
+  return (await jenkinsRequest(path, params)).json();
+}
+
+// GET к Jenkins, возвращает тело как текст (напр. '/job/x/12/consoleText').
+export async function jenkinsGetText(path, params = {}) {
+  return (await jenkinsRequest(path, params)).text();
+}
+
+// Полный URL страницы Jenkins по пути: '/job/x/12/' -> 'http://jenkins.../job/x/12/'
+export const jenkinsUrl = (path) => `${config().baseUrl}${path}`;
